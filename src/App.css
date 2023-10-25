@@ -153,3 +153,7 @@
   font-size: 13px;
   font-style: italic;
 }
+
+.path {
+  clip-path: ellipse(50% 40% at 50% 50%);
+}

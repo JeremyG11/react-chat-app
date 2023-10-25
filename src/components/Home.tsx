@@ -13,10 +13,11 @@ export default function Home() {
         `${process.env.REACT_APP_SERVER_URL}/api/auth/user`
       );
       setUser(data, data ? true : false);
-      if (isError) {
+
+      if (isSuccess) {
+        setUser(data, data ? true : false);
+      } else if (isError) {
         setUser(null, false);
-      } else if (isSuccess) {
-        setUser(data, true);
       }
       return user;
     },

@@ -11,13 +11,15 @@ export default function ChatMessage() {
     queryKey: ["messages"],
     queryFn: async () => {
       const data = await fetchMessages<Message[]>(
-        `${process.env.REACT_APP_SERVER_URL}/api/auth/user`
+        `${process.env.REACT_APP_SERVER_URL}/api/messages`
       );
       setMessages(data);
       return data;
     },
   });
-  useEffect(() => {}, [isLoading, data, error]);
+  useEffect(() => {
+    console.log(messages);
+  }, [isLoading, data, error]);
   return (
     <>
       <header className="chat__mainHeader">

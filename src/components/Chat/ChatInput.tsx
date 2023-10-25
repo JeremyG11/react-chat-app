@@ -6,7 +6,6 @@ interface ChatInputProps {
   user: User | null;
 }
 export default function ChatInput({ user }: ChatInputProps) {
-  console.log(user);
   const [msg, setMessage] = useState("");
 
   const handleSendMessage: React.FormEventHandler<HTMLFormElement> = async (
@@ -29,11 +28,8 @@ export default function ChatInput({ user }: ChatInputProps) {
         body: JSON.stringify(requestBody),
       });
       const data = await res.json();
-      console.log(data);
       setMessage("");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   return (
     <div>
