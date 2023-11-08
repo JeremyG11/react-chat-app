@@ -1,46 +1,91 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { Fragment } from "react";
+import { Skeleton } from ".././ui/skeleton";
 
-import { Message } from "../../types";
-import { fetchMessages } from "../../utils/messageInstance";
+import { Message, User } from "../../types";
+import { useUserStore } from "../../hooks/auth";
 
-export default function ChatMessage() {
-  const [messages, setMessages] = useState<Message[] | null>(null);
+interface ChatMessageProps {
+  messages: {
+    content: string;
+    to: string;
+    from: User;
+  }[];
+  chatHistoryMessages: Message[] | null;
+}
+export default function ChatMessage({
+  messages,
+  chatHistoryMessages,
+}: ChatMessageProps) {
+  const { user } = useUserStore();
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["messages"],
-    queryFn: async () => {
-      const data = await fetchMessages<Message[]>(
-        `${process.env.REACT_APP_SERVER_URL}/api/messages`
-      );
-      setMessages(data);
-      return data;
-    },
-  });
-  useEffect(() => {
-    console.log(messages);
-  }, [isLoading, data, error]);
   return (
-    <>
-      <header className="chat__mainHeader">
-        <p>Hangout with Colleagues</p>
-        <button className="leaveChat__btn">LEAVE CHAT</button>
-      </header>
-
-      <div className="message__container">
-        {messages?.map((message) => (
-          <div className="message__chats" key={message.id}>
-            <p className="sender__name">You</p>
-            <div className="message__sender">
-              <p>{message.content}</p>
+    <div className="justify-end relative">
+      <div className="h-full w-full bg-board flex-1 p-4 overflow-y-auto">
+        <Fragment>
+          {chatHistoryMessages?.map((message) => {
+            return (
+              <div
+                key={message.id}
+                className="group w-full flex flex-col space-y-4 p-2 relative "
+              >
+                <div
+                  className={`flex items-center w-full bg-transparent ${
+                    user?.id !== message.senderId ? "" : "justify-end "
+                  } `}
+                >
+                  <div className="rounded-full cursor-pointer bg-transparent m-2">
+                    {user?.id !== message.senderId ? (
+                      <img
+                        src={message?.senderProfile?.imageUrl}
+                        className="w-7 h-7  rounded-full"
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div
+                    className={`bg-white chat p-2.5 px-4 ${
+                      user?.id !== message.senderId ? "text" : "text-received "
+                    } `}
+                  >
+                    <p className="text-sm  text-gray-500">{message.content}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {messages.map((message, i) => (
+            <div
+              key={i}
+              className="group w-full flex flex-col space-y-4 p-2 relative "
+            >
+              <div
+                className={`flex items-center w-full bg-transparent ${
+                  user?.id !== message.from.id ? "" : "justify-end "
+                } `}
+              >
+                <div className="rounded-full cursor-pointer bg-transparent m-2">
+                  {user?.id !== message.from.id ? (
+                    <img
+                      src={message?.from?.imageUrl}
+                      className="w-7 h-7  rounded-full"
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                <div
+                  className={`bg-white chat p-2.5 px-4 ${
+                    user?.id !== message.to ? "text" : "text-received "
+                  } `}
+                >
+                  <p className="text-sm  text-gray-500">{message.content}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-
-        <div className="message__status">
-          <p>Someone is typing...</p>
-        </div>
+          ))}
+        </Fragment>
       </div>
-    </>
+    </div>
   );
 }

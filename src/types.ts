@@ -9,6 +9,10 @@ export type User = {
   iat: number;
   exp: number;
 };
+export interface ActiveUser {
+  socketId: string;
+  user: User;
+}
 
 export interface Message {
   id: string;
@@ -21,6 +25,12 @@ export interface Message {
   updatedAt: Date;
   senderProfile: Pick<User, "id" | "name" | "email" | "imageUrl">;
 }
+
+export type Conversation = {
+  id: string;
+  userProfileOne: User;
+  userProfileTwo: User;
+};
 
 export interface LogoutResponse {
   accessToken: null;

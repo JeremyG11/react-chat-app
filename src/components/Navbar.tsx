@@ -9,7 +9,7 @@ export default function Navbar() {
   const [toggle, setToggle] = useState(false);
   const [state, setState] = useState(false);
 
-  const { isAuthenticated, user } = useUserStore();
+  const { user } = useUserStore();
 
   return (
     <nav className="bg-white border-b w-full md:static md:text-sm md:border-none">
@@ -78,9 +78,14 @@ export default function Navbar() {
               </Link>
             </li>
             <li className="text-gray-700 hover:text-indigo-600">
-              <Link to="/" className="block">
-                Home
-              </Link>
+              <div className="flex md:hidden">
+                <Link
+                  className="w-full text-center rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600"
+                  to="/login"
+                >
+                  login
+                </Link>
+              </div>
             </li>
             <div className="space-y-3 items-center gap-x-6 md:flex md:space-y-0">
               <div className="relative">
