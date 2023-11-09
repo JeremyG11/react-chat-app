@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+ 
 import { useUserStore } from "../hooks/auth";
+import { Notification } from "./Notification";
 import { navigation, navsFooter } from "./sidebarData";
 
 const Profie = () => {
@@ -51,7 +53,7 @@ const Profie = () => {
           <h2 className="text-xl px-4 md:pl-[168px]">Profile</h2>
         </div>
         <div className="flex items-center">
-          <button
+          {/* <button
             type="button"
             className="mr-3 relative inline-flex items-center p-2 text-sm font-medium text-center text-white rounded-full"
           >
@@ -74,7 +76,8 @@ const Profie = () => {
             <div className="absolute inline-flex items-center justify-center w-5 h-5 text-xs p-1 font-bold text-white bg-red-500 rounded-full top-2 right-2 ">
               7
             </div>
-          </button>
+          </button> */}
+          <Notification/>
 
           <div className="rounded-full">
             {user?.imageUrl ? (
