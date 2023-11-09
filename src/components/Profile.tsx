@@ -1,12 +1,12 @@
 import { VscAzure } from "react-icons/vsc";
 import { ImCommand } from "react-icons/im";
+import { NavLink } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
  
 import { useUserStore } from "../hooks/auth";
 import { Notification } from "./Notification";
 import { sidebarLink, navsFooter, Menu, nestedLink } from "./sidebarData";
-import { NavLink } from "react-router-dom";
 
 const Profie = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUserStore();
