@@ -2,15 +2,18 @@ import { z } from "zod";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { VscAzure } from "react-icons/vsc";
-import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { authLogin } from "../../utils/authInstance";
 import getGoogleOAuthURL from "../../utils/google-auth";
 import { ZodLoginSchema, loginSchema } from "../../utils/schemas/loginSchema";
-import { User } from "../../types";
+import { useUserStore } from "../../hooks/auth";
 
 export default function Login() {
+  const location = useLocation();
+  const from = location.state?.from || "/";
+  const { user } = useUserStore();
   const navigate = useNavigate();
   const {
     reset,
@@ -21,25 +24,29 @@ export default function Login() {
 
   //  Onsubmit handler
   const onSubmit = async (data: ZodLoginSchema) => {
-    //
     try {
       const user = await authLogin(
         `${process.env.REACT_APP_SERVER_URL}/api/auth/user/email-password/login`,
         data
       );
-      console.log(user);
       reset();
-    } catch (error) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  useEffect(() => {
+    user && navigate(from, { replace: true });
+  }, [navigate, from, user]);
   return (
     <main className="w-full h-screen flex flex-col items-center justify-center px-4">
       <div className="max-w-sm w-full text-gray-600 space-y-5">
         <div className="text-center pb-4">
-          <VscAzure className="mx-auto text-3xl" />
+          <VscAzure className="mx-auto text-transparent bg-gradient-to-br from-emerald-600 bg-clip-text text-clip text-3xl" />
 
           <div className="mt-4">
-            <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">
-              Log in to your account
+            <h3 className="text-gray-800 text-transparent text-3xl bg-clip-text bg-gradient-to-r from-rose-400 via-orange-500 to-violet-700 font-bold sm:text-3xl">
+              Login
             </h3>
           </div>
         </div>
@@ -49,21 +56,28 @@ export default function Login() {
             <input
               {...register("email")}
               type="email"
-              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+              autoFocus
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-emerald-600 rounded-lg ring-emerald-600 focus:ring-1"
             />
             {errors.email && (
-              <p className="text-red-300">{errors.email.message}</p>
+              <p className="text-red-500 text-sm py-2 font-normal">
+                {errors.email.message}
+              </p>
             )}
           </div>
           <div>
-            <label className="font-medium">Password</label>
+            <label className="font-medium peer-active:text-emerald-500">
+              Password
+            </label>
             <input
               {...register("password")}
               type="password"
-              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+              className="w-full mt-2 px-3 py-2 peer text-gray-500 bg-transparent outline-none border focus:border-emerald-600 rounded-lg ring-emerald-600 focus:ring-1 duration-150"
             />
             {errors.password && (
-              <p className="text-red-300">{errors.password.message}</p>
+              <p className="text-red-500 text-sm py-2 font-normal">
+                {errors.password.message}
+              </p>
             )}
           </div>
           <div className="flex items-center justify-between text-sm">
@@ -76,26 +90,26 @@ export default function Login() {
               />
               <label
                 htmlFor="remember-me-checkbox"
-                className="relative flex w-5 h-5 bg-white peer-checked:bg-indigo-600 rounded-md border ring-offset-2 ring-indigo-600 duration-150 peer-active:ring cursor-pointer after:absolute after:inset-x-0 after:top-[3px] after:m-auto after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-white after:rotate-45"
+                className="relative flex w-5 h-5 bg-white peer-checked:bg-emerald-600 rounded-md border ring-offset-2 ring-emerald-600 duration-150 peer-active:ring cursor-pointer after:absolute after:inset-x-0 after:top-[3px] after:m-auto after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-white after:rotate-45"
               ></label>
               <span>Remember me</span>
             </div>
             <a
               href="#"
-              className="text-center text-indigo-600 hover:text-indigo-500"
+              className="text-center  text-emerald-600 hover:text-emerald-500"
             >
               Forgot password?
             </a>
           </div>
           <button
-            className={`w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150 ${isLoading}: opacity-25`}
+            className={`w-full px-4 py-2 text-white font-medium bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-600 rounded-lg duration-150 ${isLoading}`}
           >
-            Sign in
+            Login
           </button>
         </form>
         <a
           href={getGoogleOAuthURL()}
-          className=" bg-rose-100 w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 duration-150 active:bg-gray-100"
+          className=" w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 duration-150 active:bg-gray-100"
         >
           <svg
             className="w-5 h-5"
@@ -129,14 +143,14 @@ export default function Login() {
           </svg>
           Continue with Google
         </a>
-        <p className="text-center">
+        <p className="text-center text-sm">
           Don't have an account?
-          <a
-            href="#"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
+          <Link
+            to="#"
+            className="mx-2 font-medium text-sm text-emerald-600 hover:text-emerald-500"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </main>

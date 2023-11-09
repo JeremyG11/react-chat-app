@@ -4,9 +4,11 @@ import { useLocation } from "react-router-dom";
 
 const Layout = () => {
   const { pathname } = useLocation();
+  const isProfilePage = pathname.startsWith("/profile");
+
   return (
     <>
-      {pathname === "/profile" ? (
+      {isProfilePage || pathname === "/login" || pathname === "/register" ? (
         <Outlet />
       ) : (
         <>
