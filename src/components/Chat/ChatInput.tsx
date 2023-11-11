@@ -31,6 +31,10 @@ export default function ChatInput({ socket, user }: ChatInputProps) {
       content,
       to: params.receiverId,
     });
+    socket.emit("sent-notificatiion", {
+      to: params.receiverId,
+      content: content,
+    });
     reset();
   };
 
@@ -61,8 +65,8 @@ export default function ChatInput({ socket, user }: ChatInputProps) {
     };
   }, [socket]);
   return (
-    <div className="relative left-0 -bottom-2 md:px-10">
-      <div className="absolute -top-14">
+    <div className="relative  bg-gray-50 left-0 bottom-0 md:px-10">
+      <div className="absolute ">
         <div className="m-3 p-3">
           {isTyping ? (
             <div className="typing items-center bg-white justify-center rounded-full p-4 shadow-2xl">

@@ -31,7 +31,6 @@ function App() {
       setUser(data, data ? true : false);
       const auth = data;
       socket.auth = { user: data };
-      console.log(auth);
       socket.connect();
       return user;
     };
@@ -45,27 +44,24 @@ function App() {
       console.log(arg);
     });
     socket.emit("user-connected", user?.id);
-    socket.on("active-users", (users) => setActiveUsers(users));
-
-    socket.on("session", (arg) => {
-      console.log(arg);
+    socket.on("active-users", (users) => {
+      console.log("Active Users", users);
+      setActiveUsers((prev) => [...prev, ...users]);
     });
+
+    // socket.on("session", (arg) => {
+    //   console.log(arg);
+    // });
     socket.on("disconnect", () => {
       console.log("off disconnected");
     });
 
     return () => {
-      socket.off("connect", () => {
-        console.log("off connected");
-      });
-      socket.off("active-users", () => {
-        console.log("off active-users");
-      });
-      socket.off("disconnect", () => {
-        console.log("disconnected");
-      });
+      socket.off("connect");
+      socket.off("active-users");
+      socket.off("disconnect");
     };
-  }, [socket, isAuthenticated]);
+  }, [socket, activeUsers, isAuthenticated]);
 
   return (
     <Routes>

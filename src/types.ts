@@ -36,3 +36,10 @@ export interface LogoutResponse {
   accessToken: null;
   refreshToken: null;
 }
+
+export interface Notification {
+  id: string;
+  sender: User;
+  receiver: User;
+  isSeen: boolean;
+}

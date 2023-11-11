@@ -1,8 +1,9 @@
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 import { socket } from "../socket";
 import { ActiveUser } from "../types";
-import { useEffect, useState } from "react";
 import { useUserStore } from "../hooks/auth";
-import { Link, useNavigate } from "react-router-dom";
 import ChatUsersList from "./Chat/ChatUsersList";
 
 interface UserProfileInfoProps {
@@ -16,7 +17,7 @@ export default function UserProfileInfo({ activeUsers }: UserProfileInfoProps) {
     if (user === null) {
       navigate("/login");
     }
-  }, [user, socket]);
+  }, [user, activeUsers, socket]);
   return (
     <div className="h-screen">
       <div className="max-h-56 overflow-hidden w-full bg-red-400 rounded-b-xl md:rounded-none">
@@ -89,8 +90,7 @@ export default function UserProfileInfo({ activeUsers }: UserProfileInfoProps) {
                 </button>
                 {activeUsers
                   .filter((data) => data.user.id !== user?.id)
-                  .map((data, index) => {
-                    console.log(index, user);
+                  .map((data) => {
                     return (
                       <button
                         onClick={() =>

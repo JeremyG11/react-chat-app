@@ -7,12 +7,11 @@ import { socket } from "../../socket";
 import ChatMessage from "./ChatMessage";
 import { Message, User } from "../../types";
 import { useUserStore } from "../../hooks/auth";
-import { useChatScroll } from "../../hooks/scroll";
 import { queryConversationId } from "../../utils/messageInstance";
 
 export default function Chat() {
   const { user } = useUserStore();
-  const params = useParams();
+  const { receiverId } = useParams();
   const [chatHistoryMessages, setChatHistoryMessages] = useState<
     Message[] | null
   >([]);
@@ -24,21 +23,19 @@ export default function Chat() {
     }[]
   >([]);
 
-  const ref = useChatScroll(messages);
-
   const { isLoading, data } = useQuery({
     queryKey: ["messages", user?.id],
     queryFn: async () => {
-      const data = await queryConversationId<Message[]>(
+      const data = await queryConversationId(
         `${process.env.REACT_APP_SERVER_URL}/api/messages/conversation`,
-        { params: params.receiverId }
+        { receiverId }
       );
-      console.log(data);
-      setChatHistoryMessages(data as []);
+      const { messages } = data;
+      console.log(messages);
+      setChatHistoryMessages(messages as []);
       return data;
     },
   });
-
   // Chat history
   useEffect(() => {
     socket.on("private message", (data) => {
@@ -48,12 +45,12 @@ export default function Chat() {
     return () => {
       socket.off("private message");
     };
-  }, [messages, socket, isLoading]);
+  }, [messages, data, socket, isLoading]);
 
   return (
-    <div className="h-[632px] bg-gray-100 rlative md:px-40 xl:px-64">
+    <div className="bg-gray-50 h-[560px] rlative md:px-40 xl:px-64">
       <Suspense fallback={<Loading />}>
-        <div ref={ref} className="h-[87%] overflow-y-auto">
+        <div className="h-[90%] overflow-y-auto">
           <ChatMessage
             messages={messages}
             chatHistoryMessages={chatHistoryMessages}

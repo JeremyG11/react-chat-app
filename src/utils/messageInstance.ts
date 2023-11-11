@@ -17,12 +17,12 @@ export const fetchMessages = async <T>(
   }
 };
 
-export const queryConversationId = async <T>(
+export const queryConversationId = async (
   url: string,
   params: Record<string, any>
-): Promise<T | null> => {
+) => {
   try {
-    const { data } = await axios.get<T>(url, {
+    const { data } = await axios.get(url, {
       withCredentials: true,
       params: params,
     });

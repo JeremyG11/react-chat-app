@@ -3,6 +3,7 @@ import { Skeleton } from ".././ui/skeleton";
 
 import { Message, User } from "../../types";
 import { useUserStore } from "../../hooks/auth";
+import { useChatScroll } from "../../hooks/scroll";
 
 interface ChatMessageProps {
   messages: {
@@ -17,10 +18,14 @@ export default function ChatMessage({
   chatHistoryMessages,
 }: ChatMessageProps) {
   const { user } = useUserStore();
+  const ref = useChatScroll(messages);
 
   return (
-    <div className="justify-end relative">
-      <div className="h-full w-full bg-board flex-1 p-4 overflow-y-auto">
+    <div className="justify-end h-full bg-gray-100 relative">
+      <div
+        ref={ref}
+        className="h-full w-full bg-board flex-1 p-4 overflow-y-auto"
+      >
         <Fragment>
           {chatHistoryMessages?.map((message) => {
             return (
@@ -39,9 +44,7 @@ export default function ChatMessage({
                         src={message?.senderProfile?.imageUrl}
                         className="w-7 h-7  rounded-full"
                       />
-                    ) : (
-                      <></>
-                    )}
+                    ) : null}
                   </div>
                   <div
                     className={`bg-white chat p-2.5 px-4 ${
@@ -70,9 +73,7 @@ export default function ChatMessage({
                       src={message?.from?.imageUrl}
                       className="w-7 h-7  rounded-full"
                     />
-                  ) : (
-                    <></>
-                  )}
+                  ) : null}
                 </div>
                 <div
                   className={`bg-white chat p-2.5 px-4 ${
